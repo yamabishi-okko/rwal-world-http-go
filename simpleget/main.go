@@ -8,10 +8,10 @@ import (
 
 func main() {
 	// GET リクエスト送信
-	resp, _ := http.Get("http://localhost:18888")
-	// if err != nil {
-	// 	panic(err)
-	// }
+	resp, err := http.Get("http://localhost:18888")
+	if err != nil {
+		panic(err)
+	}
 	//終わったら閉じる
 	// //ステータス表示　（文字列or数値）
 	log.Println("Status:", resp.Status)
@@ -20,10 +20,10 @@ func main() {
 	defer resp.Body.Close()
 
 	// リクエストボディーに埋め込み
-	body, _ := io.ReadAll(resp.Body)
-	// if err != nil {
-	// 	panic(err)
-	// }
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		panic(err)
+	}
 		
 	///コンテンつ表示
 	log.Println("Body:", string(body))
