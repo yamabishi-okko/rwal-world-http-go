@@ -1,4 +1,4 @@
-// get_with_query.go - パーセントエンコーディングの実例を示すHTTP GETリクエストの例
+// query_get.go - パーセントエンコーディングの実例を示すHTTP GETリクエストの例
 package main
 
 import (
@@ -21,7 +21,7 @@ func main() {
 
 	// 特殊文字を含むクエリパラメータを作成（アルファベット順）
 	values := url.Values{
-		"ampersand":   {"Tom&Jerry"},        // & は %26 に変換される
+		"ampersand":   {"Tetsu&Tomo"},        // & は %26 に変換される
 		"at":          {"user@example.com"}, // @ は %40 に変換される
 		"equals":      {"key=value"},        // = は %3D に変換される
 		"exclamation": {"Hello!World"},      // ! は %21 に変換される
@@ -30,7 +30,7 @@ func main() {
 
 	// エンコード前とエンコード後の値を表示（アルファベット順）
 	fmt.Println("【変身前】")
-	fmt.Println("ampersand: Tom&Jerry")
+	fmt.Println("ampersand: Tetsu&Tomo")
 	fmt.Println("at: user@example.com")
 	fmt.Println("equals: key=value")
 	fmt.Println("exclamation: Hello!World")
