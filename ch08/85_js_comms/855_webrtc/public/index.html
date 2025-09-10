@@ -1,0 +1,66 @@
+<!doctype html>
+<meta charset="utf-8" />
+<title>855 WebRTC DataChannel</title>
+<h1>855 WebRTC — DataChannel Chat (P2P / カメラなし)</h1>
+
+<div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+  <label>Room:
+    <input id="room" value="lobby" />
+  </label>
+  <button id="connect">Connect</button>
+  <button id="start">Start (Offer)</button>
+  <span id="status">⏸ disconnected</span>
+</div>
+
+<div style="margin-top:12px">
+  <input id="msg" placeholder="メッセージ" />
+  <button id="send">送信</button>
+</div>
+
+<!-- ▼▼ 吹き出しログ ▼▼ -->
+<div id="log" class="chat"></div>
+
+<style>
+  .chat {
+    margin-top: 12px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 10px;
+    height: 320px;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: #fafafa;
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, "Hiragino Sans", "Noto Sans JP", sans-serif;
+  }
+  .bubble {
+    max-width: 70%;
+    padding: 8px 12px;
+    border-radius: 14px;
+    line-height: 1.4;
+    word-break: break-word;
+    box-shadow: 0 1px 2px rgba(0,0,0,.06);
+  }
+  .me {           /* 自分：水色（ライトブルー） */
+    align-self: flex-end;
+    background: #d7efff;
+  }
+  .peer {         /* 相手：黄緑（ライトグリーン） */
+    align-self: flex-start;
+    background: #dbffd7;
+  }
+  .sys {          /* システムログ（グレー） */
+    align-self: center;
+    background: #eee;
+    color: #555;
+    font-size: 12px;
+  }
+  .big {          /* 特大強調（やりますねぇ！用） */
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: #d00;
+  }
+</style>
+
+<script src="main.js"></script>
