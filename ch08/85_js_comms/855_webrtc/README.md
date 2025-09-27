@@ -12,7 +12,7 @@ public/index.html — チャット画面
 public/main.js — WebRTC 接続と DataChannel の制御
 
 ### 起動
-cd ch08/86_webrtc
+cd ch08/85_js_comms/855_webrtc
 go run .
 アクセス: http://localhost:18888
 
