@@ -69,7 +69,7 @@
  ブラウザ側：<br>
   同一オリジンなら、次のリクエストから自動で Cookie: sid=... を付けて送る（fetchの既定動作）<br>
 
-    ```
+
     func handleSetCookie(w http.ResponseWriter, r *http.Request) {
         sid := newSID()
         sessionsMu.Lock()
@@ -81,14 +81,14 @@
         })                                           // ← ★ レスポンスヘッダ Set-Cookie を出す
         writeJSON(w, map[string]any{"session": sessions[sid]})
     }
-    ```
+
 
 ### GET /whoami … さっきのIDで「同じ人だね」と認識、カウンタが増える 
  原理：<br>
   ブラウザが勝手に付けてきた Cookie: sid=... を受け取り、サーバ側Mapのキーとして照合<br>
   見つかれば同一人物と判定し、カウンタを+1 → JSONで返す<br>
   見つからなければ 401 Unauthorized を返す（状態がないので“誰かわからない”）<br>
-    ```
+
     func handleWhoAmI(w http.ResponseWriter, r *http.Request) {
         c, err := r.Cookie("sid")                 // ← ★ リクエストヘッダの Cookie から取り出す
         if err != nil { http.Error(w,"no session", http.StatusUnauthorized); return }
@@ -98,24 +98,24 @@
         s.Counter++                               // ← サーバ側の状態を更新
         writeJSON(w, map[string]any{"session": s})
     }
-    ```
+
 
 ### GET /search?q=go … q に入れた文字をサーバが受け取って返す 
  原理：<br>
   r.URL.Query() が map[string][]string（クエリの辞書）を返す<br>
   それをそのままJSONでエコー<br>
-    ```
+
     func handleSearch(w http.ResponseWriter, r *http.Request) {
     q := r.URL.Query().Get("q")   // ← URLの ?q= の値を取り出す
     writeJSON(w, map[string]string{"q": q})
     }
-    ```
+
 
 ### GET /user/123 … URLの 123 をサーバが読み取って返す 
  原理：<br>
   最小実装なので自分で文字列を切る（本格ルータならパラメータ抽出をやってくれる）<br>
   バリデーションOKならJSON返却、NGなら 400 Bad Request<br>
-    ```
+
     func handleUser(w http.ResponseWriter, r *http.Request) {
     id := strings.TrimPrefix(r.URL.Path, "/user/") // ← パスから手動で切り出し
     if _, err := strconv.Atoi(id); err != nil {
@@ -124,40 +124,42 @@
     }
     writeJSON(w, map[string]string{"id": id})
     }
-    ```
+
 
 見どころ：ブラウザの Networkタブ を開いて、 「ステータス（200や401）」「ヘッダ（Set-Cookie / Cookie）」を覗いてみるだけで理解が進むよ。<br>
 
 
-6. ひとつだけ“端から端まで”追ってみる（/json）
-クリック → JS が fetch('/json')
-ブラウザが GET /json を localhost:8080 に送る
-ListenAndServe が受信 → ServeMux が /json にマッチ → handleJSON を呼ぶ
-handleJSON → writeJSON が Content-Type ヘッダとJSONボディを書き出す
-OS 経由でレスポンスがブラウザへ戻る
-fetch の Response を await r.json() → JSオブジェクト化 → <pre> に表示
-ここで見えるキー情報
+1. ひとつだけ“端から端まで”追ってみる（/json）<br>
+クリック → JS が fetch('/json')<br>
+ブラウザが GET /json を localhost:8080 に送る<br>
+ListenAndServe が受信 → ServeMux が /json にマッチ → handleJSON を呼ぶ<br>
+handleJSON → writeJSON が Content-Type ヘッダとJSONボディを書き出す<br>
+OS 経由でレスポンスがブラウザへ戻る<br>
+fetch の Response を await r.json() → JSオブジェクト化 → preに表示<br>
+ここで見えるキー情報<br>
+```
 ステータス: 200
-レスポンスヘッダ: Content-Type: application/json; charset=utf-8
+レスポンスヘッダ: Content-Type: application/json; charset=utf-8<br>
 ボディ: {"message":"hi","time":"2025-10-15T...Z"}（書式は time.RFC3339）
+```
 
-7. なぜ Cookie で「同じ人」を判定できるの？
-初回 /set-cookie のレスに Set-Cookie: sid=abc... を付ける
-ブラウザは同一オリジンの次回以降のリクエストに自動で Cookie: sid=abc... を添付
-サーバは r.Cookie("sid") で受け取り、**サーバ側ストレージ（ここでは Map）**のキーとして照合
-だから「誰が誰か」を継続的に参照できる
-本番は Map ではなく Redis/DB、Cookieは HttpOnly + Secure で守るのが基本
+2. なぜ Cookie で「同じ人」を判定できるの？<br>
+初回 /set-cookie のレスに Set-Cookie: sid=abc... を付ける<br>
+ブラウザは同一オリジンの次回以降のリクエストに自動で Cookie: sid=abc... を添付<br>
+サーバは r.Cookie("sid") で受け取り、**サーバ側ストレージ（ここでは Map）**のキーとして照合<br>
+だから「誰が誰か」を継続的に参照できる<br>
+本番は Map ではなく Redis/DB、Cookieは HttpOnly + Secure で守るのが基本<br>
 
-8. つまずいたら“可視化”してみる
-ヘッダを全部見る：curl -i / Networkタブ
-サーバ側で中身を出す：例）handleEcho の最初で io.ReadAll(r.Body) をログ出力
-処理順を色付け：logging() で fmt.Println("[ENTER]", r.URL.Path)、ハンドラの最後で fmt.Println("[LEAVE]")
+3. つまずいたら“可視化”してみる<br>
+ヘッダを全部見る：curl -i / Networkタブ<br>
+サーバ側で中身を出す：例）handleEcho の最初で io.ReadAll(r.Body) をログ出力<br>
+処理順を色付け：logging() で fmt.Println("[ENTER]", r.URL.Path)、ハンドラの最後で fmt.Println("[LEAVE]")<br>
 
-9. ここまでの“原理”のエッセンス
-HTTPは「メソッド・パス・ヘッダ・ボディ」を送る／受けるだけ
-**ServeMux（ディスパッチャ）**が「どのハンドラに渡すか」を決める
-ハンドラがステータス・ヘッダ・ボディを作る（Content-Type はとくに大事）
-Cookieは「小さな名札」。IDだけをクッキーに、本体はサーバ側に保存
-fetch は結果を Promise で返し、JSでパースしてDOMに描画
-この5点が腹落ちすれば、他言語・他フレームワークでも見通しが効くようになるよ。
-さらに掘りたい箇所（例：Keep-Alive、HTTP/2、エラー設計、テンプレートSSRなど）があれば、該当コードに追記する形で“動く可視化”を足していこう🌙
+4. ここまでの“原理”のエッセンス<br>
+HTTPは「メソッド・パス・ヘッダ・ボディ」を送る／受けるだけ<br>
+**ServeMux（ディスパッチャ）**が「どのハンドラに渡すか」を決める<br>
+ハンドラがステータス・ヘッダ・ボディを作る（Content-Type はとくに大事）<br>
+Cookieは「小さな名札」。IDだけをクッキーに、本体はサーバ側に保存<br>
+fetch は結果を Promise で返し、JSでパースしてDOMに描画<br>
+この5点が腹落ちすれば、他言語・他フレームワークでも見通しが効くようになるよ。<br>
+さらに掘りたい箇所（例：Keep-Alive、HTTP/2、エラー設計、テンプレートSSRなど）があれば、該当コードに追記する形で“動く可視化”を足していこう🌙<br>
