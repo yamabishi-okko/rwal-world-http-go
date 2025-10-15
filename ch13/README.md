@@ -41,13 +41,13 @@
 ```
  
 ### GET /json … 現在時刻つきのJSONが表示される 
- 原理：
-  レスポンスヘッダに Content-Type: application/json を付ける
-  json.Encoder が Goの値（構造体/マップ）→ JSON文字列へ変換し、ボディに直書き
-  ステータスはデフォルト 200 OK（変えたいなら w.WriteHeader(201) などを先に呼ぶ）
- ブラウザ側：
-  fetch の Response を r.json() で逆変換してJSオブジェクトへ
-  それを JSON.stringify して <pre> に表示
+ 原理：<br>
+  レスポンスヘッダに Content-Type: application/json を付ける<br>
+  json.Encoder が Goの値（構造体/マップ）→ JSON文字列へ変換し、ボディに直書き<br>
+  ステータスはデフォルト 200 OK（変えたいなら w.WriteHeader(201) などを先に呼ぶ）<br>
+ ブラウザ側：<br>
+  fetch の Response を r.json() で逆変換してJSオブジェクトへ<br>
+  それを JSON.stringify して pre>に表示<br>
      ```
     func handleJSON(w http.ResponseWriter, r *http.Request) {
         type resp struct{ Message, Time string }
@@ -63,11 +63,11 @@
      ```
 
 ### GET /set-cookie … サーバがあなた用のIDを発行（Cookieに保存） 
- 原理：
-  サーバが新規セッションIDを作って、サーバ側メモリMapにひも付いたデータを保存
-  レスポンスで Set-Cookie: sid=... を送る（これがブラウザに保存される）
- ブラウザ側：
-  同一オリジンなら、次のリクエストから自動で Cookie: sid=... を付けて送る（fetchの既定動作）
+ 原理：<br>
+  サーバが新規セッションIDを作って、サーバ側メモリMapにひも付いたデータを保存<br>
+  レスポンスで Set-Cookie: sid=... を送る（これがブラウザに保存される）<br>
+ ブラウザ側：<br>
+  同一オリジンなら、次のリクエストから自動で Cookie: sid=... を付けて送る（fetchの既定動作）<br>
     ```
     func handleSetCookie(w http.ResponseWriter, r *http.Request) {
         sid := newSID()
@@ -83,10 +83,10 @@
     ```
 
 ### GET /whoami … さっきのIDで「同じ人だね」と認識、カウンタが増える 
- 原理：
-  ブラウザが勝手に付けてきた Cookie: sid=... を受け取り、サーバ側Mapのキーとして照合
-  見つかれば同一人物と判定し、カウンタを+1 → JSONで返す
-  見つからなければ 401 Unauthorized を返す（状態がないので“誰かわからない”）
+ 原理：<br>
+  ブラウザが勝手に付けてきた Cookie: sid=... を受け取り、サーバ側Mapのキーとして照合<br>
+  見つかれば同一人物と判定し、カウンタを+1 → JSONで返す<br>
+  見つからなければ 401 Unauthorized を返す（状態がないので“誰かわからない”）<br>
     ```
     func handleWhoAmI(w http.ResponseWriter, r *http.Request) {
         c, err := r.Cookie("sid")                 // ← ★ リクエストヘッダの Cookie から取り出す
@@ -100,9 +100,9 @@
     ```
 
 ### GET /search?q=go … q に入れた文字をサーバが受け取って返す 
- 原理：
-  r.URL.Query() が map[string][]string（クエリの辞書）を返す
-  それをそのままJSONでエコー
+ 原理：<br>
+  r.URL.Query() が map[string][]string（クエリの辞書）を返す<br>
+  それをそのままJSONでエコー<br>
     ```
     func handleSearch(w http.ResponseWriter, r *http.Request) {
     q := r.URL.Query().Get("q")   // ← URLの ?q= の値を取り出す
@@ -111,9 +111,9 @@
     ```
 
 ### GET /user/123 … URLの 123 をサーバが読み取って返す 
- 原理：
-  最小実装なので自分で文字列を切る（本格ルータならパラメータ抽出をやってくれる）
-  バリデーションOKならJSON返却、NGなら 400 Bad Request
+ 原理：<br>
+  最小実装なので自分で文字列を切る（本格ルータならパラメータ抽出をやってくれる）<br>
+  バリデーションOKならJSON返却、NGなら 400 Bad Request<br>
     ```
     func handleUser(w http.ResponseWriter, r *http.Request) {
     id := strings.TrimPrefix(r.URL.Path, "/user/") // ← パスから手動で切り出し
@@ -125,7 +125,7 @@
     }
     ```
 
-見どころ：ブラウザの Networkタブ を開いて、 「ステータス（200や401）」「ヘッダ（Set-Cookie / Cookie）」を覗いてみるだけで理解が進むよ。
+見どころ：ブラウザの Networkタブ を開いて、 「ステータス（200や401）」「ヘッダ（Set-Cookie / Cookie）」を覗いてみるだけで理解が進むよ。<br>
 
 
 6. ひとつだけ“端から端まで”追ってみる（/json）
