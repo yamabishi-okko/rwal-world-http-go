@@ -47,7 +47,8 @@
   ステータスはデフォルト 200 OK（変えたいなら w.WriteHeader(201) などを先に呼ぶ）<br>
  ブラウザ側：<br>
   fetch の Response を r.json() で逆変換してJSオブジェクトへ<br>
-  それを JSON.stringify して pre>に表示<br>
+  それを JSON.stringify して preに表示<br>
+  
      ```
     func handleJSON(w http.ResponseWriter, r *http.Request) {
         type resp struct{ Message, Time string }
@@ -68,6 +69,7 @@
   レスポンスで Set-Cookie: sid=... を送る（これがブラウザに保存される）<br>
  ブラウザ側：<br>
   同一オリジンなら、次のリクエストから自動で Cookie: sid=... を付けて送る（fetchの既定動作）<br>
+
     ```
     func handleSetCookie(w http.ResponseWriter, r *http.Request) {
         sid := newSID()
