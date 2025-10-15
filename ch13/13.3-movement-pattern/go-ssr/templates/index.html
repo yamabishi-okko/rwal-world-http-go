@@ -1,0 +1,10 @@
+<!doctype html>
+<meta charset="utf-8" />
+<title>Go SSR</title>
+<h1>Go SSR</h1>
+<p>Server Time: {{.Now}}</p>
+<ul>
+{{range .Items}}<li>{{.}}</li>{{end}}
+</ul>
+<button disabled>（SSRはこのボタンは無効：更新=ページ再読込）</button>
+<p><a href="/">Reload</a> で更新</p>

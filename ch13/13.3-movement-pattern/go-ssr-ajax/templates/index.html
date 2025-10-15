@@ -1,0 +1,18 @@
+<!doctype html>
+<meta charset="utf-8" />
+<title>Go SSR + Ajax</title>
+<h1>Go SSR + Ajax</h1>
+<p>Initial Server Time: {{.Now}}</p>
+<p>Live Time: <span id="time">{{.Now}}</span></p>
+<ul id="items">{{range .Items}}<li>{{.}}</li>{{end}}</ul>
+<button id="btn">時刻とitemsをAPIから更新</button>
+<script>
+const timeEl = document.getElementById('time');
+const listEl = document.getElementById('items');
+document.getElementById('btn').onclick = async () => {
+const r = await fetch('/api/state');
+const j = await r.json();
+timeEl.textContent = j.now;
+listEl.innerHTML = j.items.map(x=>`<li>${x}</li>`).join('');
+};
+</script>
