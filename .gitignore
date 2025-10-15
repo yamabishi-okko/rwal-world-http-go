@@ -34,3 +34,10 @@ go.work.sum
 # TLS demo secrets
 **/private/*.key
 **/*.srl
+
+node_modules/
+.next/
+dist/
+*.log
+.DS_Store
+EOF
