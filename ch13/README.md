@@ -48,8 +48,7 @@
  ブラウザ側：<br>
   fetch の Response を r.json() で逆変換してJSオブジェクトへ<br>
   それを JSON.stringify して preに表示<br>
-  
-     ```
+
     func handleJSON(w http.ResponseWriter, r *http.Request) {
         type resp struct{ Message, Time string }
         writeJSON(w, resp{Message: "hi", Time: time.Now().UTC().Format(time.RFC3339)})
@@ -61,7 +60,7 @@
         enc.SetIndent("", "  ")
         _ = enc.Encode(v)                                                 // ← ボディにJSONを書き込む
     }
-     ```
+
 
 ### GET /set-cookie … サーバがあなた用のIDを発行（Cookieに保存） 
  原理：<br>
