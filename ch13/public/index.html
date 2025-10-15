@@ -1,0 +1,28 @@
+<!doctype html>
+<meta charset="utf-8">
+<h1>Ajax mini demo (Go)</h1>
+
+<p><a href="/">GET / (text)</a></p>
+<p><a href="/static/index.html">/static/index.html (this page)</a></p>
+
+<button id="btn-time">GET /json</button>
+<button id="btn-set">GET /set-cookie</button>
+<button id="btn-me">GET /whoami</button>
+<button id="btn-search">GET /search?q=go</button>
+<button id="btn-user">GET /user/123</button>
+
+<pre id="out"></pre>
+
+<script>
+const out = document.getElementById('out');
+async function go(path) {
+  const r = await fetch(path);
+  out.textContent = r.status + " " + r.statusText + "\n" +
+    JSON.stringify(await r.json().catch(()=>({text: 'not json'})), null, 2);
+}
+document.getElementById('btn-time').onclick  = () => go('/json');
+document.getElementById('btn-set').onclick   = () => go('/set-cookie');
+document.getElementById('btn-me').onclick    = () => go('/whoami');
+document.getElementById('btn-search').onclick= () => go('/search?q=go');
+document.getElementById('btn-user').onclick  = () => go('/user/123');
+</script>
